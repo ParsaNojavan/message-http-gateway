@@ -1,13 +1,19 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Body, Controller, Get, Inject, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { AppService } from './app.service';
+import { JwtService } from '@nestjs/jwt';
+import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
 
 @Controller()
 export class AppController {
-  constructor(@Inject('user-client') private userClient: ClientProxy) {}
+  constructor(private jwt: JwtService) { }
 
-  @Get()
-  async getHello() {
-    return await this.userClient.send('user.login',{})
+
+  @Get('test')
+  @UseGuards(new JwtAuthGuard(['user']))
+  async test(@Body() data) {
+    console.log('hello from authenticated route');
   }
+
+
 }
