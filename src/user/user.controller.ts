@@ -1,6 +1,8 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { UserService } from './user.service';
+import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
+import { HttpContext } from '@app/contracts/utils/crossCuttingConcerns/decorators/http-context.decorator';
 
 @Controller('user')
 export class UserController {
@@ -24,5 +26,11 @@ export class UserController {
     @Post('refresh-token')
     async refreshToken(@Body() data) {
         return await this.userClient.send('user.refresh-token', data)
+    }
+
+    @Post('reset-password')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async resetPassword(@Body() data, @HttpContext() context) {
+        return await this.userClient.send('user.reset-password', { resetPassword: data, context })
     }
 }
