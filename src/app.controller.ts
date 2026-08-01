@@ -10,7 +10,7 @@ export class AppController {
 
 
   @Get('test')
-  @UseGuards(new JwtAuthGuard(['user']))
+  @UseGuards(new JwtAuthGuard(['admin']))
   async test(@Body() data) {
     console.log('hello from authenticated route');
   }

@@ -5,6 +5,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { JwtStrategy } from '@app/contracts/utils/jwt_token/strategies/jwt.strategy';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
     imports: [
@@ -16,7 +17,8 @@ import { JwtStrategy } from '@app/contracts/utils/jwt_token/strategies/jwt.strat
             },
             global: true
         }),
-        UserModule
+        UserModule,
+        ChatModule
     ],
     controllers: [AppController],
     providers: [AppService,JwtStrategy],
