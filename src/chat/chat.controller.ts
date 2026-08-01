@@ -16,6 +16,13 @@ export class ChatController {
         return await this.chatClient.send('group.create', { data: groupDto, context: buildContext(token, this.jwt) })
     }
 
+    @Post('create-direct')
+    async direct(@Body() body: { userId }, @Req() req) {
+        const token = req.headers.authorization?.split(' ')[1];
+
+        return await this.chatClient.send('direct.create', { data: body, context: buildContext(token, this.jwt) })
+    }
+
     @Post('add-member')
     async add(@Body() memberDto, @Req() req) {
         const token = req.headers.authorization?.split(' ')[1];
