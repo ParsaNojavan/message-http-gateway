@@ -1,6 +1,7 @@
 import { HttpContext } from '@app/contracts/utils/crossCuttingConcerns/decorators/http-context.decorator';
 import { buildContext } from '@app/contracts/utils/jwt_token/context/jwt.context';
-import { Body, Controller, Inject, Post, Req } from '@nestjs/common';
+import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
+import { Body, Controller, Get, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -10,6 +11,7 @@ export class ChatController {
         private jwt: JwtService) { }
 
     @Post('create-group')
+    @UseGuards(new JwtAuthGuard(['user']))
     async create(@Body() groupDto, @Req() req) {
         const token = req.headers.authorization?.split(' ')[1];
 
@@ -17,6 +19,7 @@ export class ChatController {
     }
 
     @Post('create-direct')
+    @UseGuards(new JwtAuthGuard(['user']))
     async direct(@Body() body: { userId }, @Req() req) {
         const token = req.headers.authorization?.split(' ')[1];
 
@@ -24,6 +27,7 @@ export class ChatController {
     }
 
     @Post('add-member')
+    @UseGuards(new JwtAuthGuard(['user']))
     async add(@Body() memberDto, @Req() req) {
         const token = req.headers.authorization?.split(' ')[1];
 
@@ -31,9 +35,20 @@ export class ChatController {
     }
 
     @Post('remove-member')
+    @UseGuards(new JwtAuthGuard(['user']))
     async remove(@Body() memberDto, @Req() req) {
         const token = req.headers.authorization?.split(' ')[1];
 
         return await this.chatClient.send('group.remove', { data: memberDto, context: buildContext(token, this.jwt) })
     }
+
+
+    @Get('users-status')
+    @UseGuards(new JwtAuthGuard(['user']))
+    usersPresences(@Body() body: { userIds: string[] }) {
+        return this.chatClient.send('users-status.check', {
+            userIds: body.userIds,
+        });
+    }
+
 }
