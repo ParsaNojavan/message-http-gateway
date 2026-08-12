@@ -51,4 +51,13 @@ export class ChatController {
         });
     }
 
+    @Post('message-seen')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async markAsSeen(@Body() body: { roomId: string, messageIds: string[] }, @Req() req) {
+        const token = req.headers.authorization?.split(' ')[1];
+        console.log(token);
+
+        return await this.chatClient.send('message.seen', { roomId: body.roomId, messageIds: body.messageIds, context: buildContext(token, this.jwt) })
+    }
+
 }
