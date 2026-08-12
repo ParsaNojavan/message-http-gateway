@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
@@ -32,5 +32,11 @@ export class UserController {
     @UseGuards(new JwtAuthGuard(['user']))
     async resetPassword(@Body() data, @HttpContext() context) {
         return await this.userClient.send('user.reset-password', { resetPassword: data, context })
+    }
+
+    @Get('user-profile')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async userProfile(@HttpContext() context) {
+        return await this.userClient.send('user.profile', { context })
     }
 }
