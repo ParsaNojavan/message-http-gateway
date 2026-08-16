@@ -1,7 +1,7 @@
 import { HttpContext } from '@app/contracts/utils/crossCuttingConcerns/decorators/http-context.decorator';
 import { buildContext } from '@app/contracts/utils/jwt_token/context/jwt.context';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
-import { Body, Controller, Get, Inject, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -58,6 +58,24 @@ export class ChatController {
         console.log(token);
 
         return await this.chatClient.send('message.seen', { roomId: body.roomId, messageIds: body.messageIds, context: buildContext(token, this.jwt) })
+    }
+
+    @Put('room-mute')
+    @UseGuards(new JwtAuthGuard(['user']))
+    muteRoom(@Body() body: { roomId: string, durationMinutes: number }, @HttpContext() context) {
+        return this.chatClient.send('room.mute', {
+            roomId: body.roomId,
+            durationMinutes: body.durationMinutes,
+            context: context
+        });
+    }
+
+    @Get('user-rooms')
+    @UseGuards(new JwtAuthGuard(['user']))
+    userRooms(@HttpContext() context) {
+        return this.chatClient.send('rooms.fetch', {
+            context: context
+        });
     }
 
 }
