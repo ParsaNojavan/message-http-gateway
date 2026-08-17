@@ -45,4 +45,10 @@ export class UserController {
     async updateProfile(@Body() data, @HttpContext() context) {
         return await this.userClient.send('user.update', { userDto: data, context })
     }
+
+    @Post('block-user')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async blockUser(@Body() data, @HttpContext() context) {
+        return await this.userClient.send('user.block', { blockedId: data.blockedId, context })
+    }
 }
