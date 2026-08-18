@@ -78,4 +78,9 @@ export class ChatController {
         });
     }
 
+    @Post('join-room')
+    async joinRoom(@Body() body: { roomId: string }, @HttpContext() context) {
+        return await this.chatClient.send('room.join', { roomId: body.roomId, context: context })
+    }
+
 }
