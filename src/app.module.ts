@@ -8,6 +8,7 @@ import { JwtStrategy } from '@app/contracts/utils/jwt_token/strategies/jwt.strat
 import { ChatModule } from './chat/chat.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { ApiKeyModule } from './api-key/api-key.module';
+import { SupportModule } from './support/support.module';
 
 @Module({
     imports: [
@@ -22,7 +23,8 @@ import { ApiKeyModule } from './api-key/api-key.module';
         UserModule,
         ChatModule,
         NotificationsModule,
-        ApiKeyModule
+        ApiKeyModule,
+        SupportModule
     ],
     controllers: [AppController],
     providers: [AppService,JwtStrategy],
