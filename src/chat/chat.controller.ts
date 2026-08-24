@@ -43,7 +43,7 @@ export class ChatController {
     }
 
 
-    @Get('users-status')
+    @Post('users-status')
     @UseGuards(new JwtAuthGuard(['user']))
     usersPresences(@Body() body: { userIds: string[] }) {
         return this.chatClient.send('users-status.check', {
