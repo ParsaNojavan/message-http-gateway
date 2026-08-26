@@ -1,7 +1,7 @@
 import { HttpContext } from '@app/contracts/utils/crossCuttingConcerns/decorators/http-context.decorator';
 import { buildContext } from '@app/contracts/utils/jwt_token/context/jwt.context';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
-import { Body, Controller, Get, Inject, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -81,6 +81,15 @@ export class ChatController {
     @Post('join-room')
     async joinRoom(@Body() body: { roomId: string }, @HttpContext() context) {
         return await this.chatClient.send('room.join', { roomId: body.roomId, context: context })
+    }
+
+    @Get('rpc-token')
+    @UseGuards(new JwtAuthGuard(['user']))
+    rpcToken(@Query('roomId') roomId,
+        @HttpContext() context) {
+        return this.chatClient.send('group-rtc.token', {
+            roomId, context
+        });
     }
 
 }
