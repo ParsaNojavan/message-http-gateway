@@ -113,7 +113,7 @@ export class ChatController {
     @UseGuards(new JwtAuthGuard(['user']))
     async getRoomMessages(
         @HttpContext() context,
-        @Param('roomId') roomId: string, 
+        @Param('roomId') roomId: string,
         @Query('messageId') messageId?: string,
         @Query('limit') limit?: string,
     ) {
@@ -122,6 +122,23 @@ export class ChatController {
             messageId: messageId,
             limit: limit ? parseInt(limit, 10) : 20,
             context: context,
-        })   
+        })
+    }
+
+    @Get(':roomId/messages/search')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async searchMessages(
+        @HttpContext() context,
+        @Param('roomId') roomId: string,
+        @Query() queryDto,
+    ) {
+
+        return this.chatClient.send('room.messages.search', {
+            roomId: roomId,
+            query: queryDto.q,
+            limit: queryDto.limit,
+            messageId: queryDto.cursor,
+            context: context
+        })
     }
 }
