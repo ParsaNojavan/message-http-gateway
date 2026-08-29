@@ -1,7 +1,7 @@
 import { HttpContext } from '@app/contracts/utils/crossCuttingConcerns/decorators/http-context.decorator';
 import { buildContext } from '@app/contracts/utils/jwt_token/context/jwt.context';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
-import { Body, Controller, Get, Inject, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -109,4 +109,19 @@ export class ChatController {
         });
     }
 
+    @Get(':roomId/messages')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getRoomMessages(
+        @HttpContext() context,
+        @Param('roomId') roomId: string, 
+        @Query('messageId') messageId?: string,
+        @Query('limit') limit?: string,
+    ) {
+        return this.chatClient.send('room.messages', {
+            roomId: roomId,
+            messageId: messageId,
+            limit: limit ? parseInt(limit, 10) : 20,
+            context: context,
+        })   
+    }
 }
