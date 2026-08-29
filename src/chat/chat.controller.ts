@@ -31,7 +31,7 @@ export class ChatController {
     async add(@Body() memberDto, @Req() req) {
         const token = req.headers.authorization?.split(' ')[1];
 
-        return await this.chatClient.send('group.add', { data: memberDto, context: buildContext(token, this.jwt) })
+        return await this.chatClient.send('group.add', { roomId: memberDto.roomId, memberId: memberDto.memberId, context: buildContext(token, this.jwt) })
     }
 
     @Post('remove-member')
@@ -89,6 +89,23 @@ export class ChatController {
         @HttpContext() context) {
         return this.chatClient.send('group-rtc.token', {
             roomId, context
+        });
+    }
+
+    @Get('user-calls')
+    @UseGuards(new JwtAuthGuard(['user']))
+    userCalls(
+        @HttpContext() context,
+        @Query('page') page?: string,
+        @Query('limit') limit?: string
+    ) {
+
+        const userId = context.sub;
+
+        return this.chatClient.send('calls.list', {
+            page: page,
+            limit: limit,
+            context: context
         });
     }
 
