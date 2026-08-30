@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
@@ -62,5 +62,21 @@ export class UserController {
                 customLastName: data.customLastName,
                 context: context
             })
+    }
+
+    @Get('contacts')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async listContacts(
+        @Query('search') search: string,
+        @Query('cursor') cursor: string,
+        @Query('limit') limit: string,
+        @HttpContext() context,
+    ) {
+        return this.userClient.send('contacts.list', {
+            search: search,
+            cursor: cursor,
+            limit: limit,
+            context: context
+        })
     }
 }
