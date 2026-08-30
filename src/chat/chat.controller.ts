@@ -1,7 +1,7 @@
 import { HttpContext } from '@app/contracts/utils/crossCuttingConcerns/decorators/http-context.decorator';
 import { buildContext } from '@app/contracts/utils/jwt_token/context/jwt.context';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
-import { Body, Controller, Get, Inject, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -168,5 +168,50 @@ export class ChatController {
             limit: queryDto.limit,
             context: context
         })
+    }
+
+    @Post('channel/create')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async createChannel(@Body() body: {
+        name: string,
+        avatar: string,
+    }, @HttpContext() context) {
+
+        return this.chatClient
+            .send('channel.create', {
+                name: body.name,
+                avatar: body.avatar,
+                context: context
+            })
+    }
+
+    @Post('channel/add-member')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async addMemberChannel(@Body() body: {
+        roomId: string,
+        memberId: string,
+    }, @HttpContext() context) {
+
+        return this.chatClient
+            .send('channel.add', {
+                roomId: body.roomId,
+                memberId: body.memberId,
+                context: context
+            })
+    }
+
+    @Delete('channel/remove-member')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async removeMemberChannel(@Body() body: {
+        roomId: string,
+        memberId: string,
+    }, @HttpContext() context) {
+
+        return this.chatClient
+            .send('channel.remove', {
+                roomId: body.roomId,
+                memberId: body.memberId,
+                context: context
+            })
     }
 }
