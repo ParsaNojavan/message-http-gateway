@@ -51,4 +51,16 @@ export class UserController {
     async blockUser(@Body() data, @HttpContext() context) {
         return await this.userClient.send('user.block', { blockedId: data.blockedId, context })
     }
+
+    @Post('contacts')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async addContact(@Body() data, @HttpContext() context) {
+        return await this.userClient.send('contact.add',
+            {
+                query: data.query,
+                customFirstName: data.customFirstName,
+                customLastName: data.customLastName,
+                context: context
+            })
+    }
 }
