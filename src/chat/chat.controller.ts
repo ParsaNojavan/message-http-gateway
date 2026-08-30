@@ -155,4 +155,18 @@ export class ChatController {
             context: context
         })
     }
+
+    @Get('rooms/search')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async searchRooms(
+        @HttpContext() context,
+        @Query() queryDto,
+    ) {
+
+        return this.chatClient.send('rooms.search', {
+            query: queryDto.q,
+            limit: queryDto.limit,
+            context: context
+        })
+    }
 }
