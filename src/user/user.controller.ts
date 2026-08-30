@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { UserService } from './user.service';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
@@ -78,5 +78,33 @@ export class UserController {
             limit: limit,
             context: context
         })
+    }
+
+    @Patch('contacts/:contactUserId')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async editContact(
+        @Param('contactUserId') contactUserId: string,
+        @Body() editContactDto: any,
+        @HttpContext() context
+    ) {
+
+        return this.userClient.send('contacts.edit', {
+            contactUserId,
+            data: editContactDto,
+            context: context,
+        });
+    }
+
+    @Delete('contacts/:contactUserId')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async removeContact(
+        @Param('contactUserId') contactUserId: string,
+        @HttpContext() context
+    ) {
+
+        return this.userClient.send('contacts.remove', {
+            contactUserId,
+            context: context,
+        });
     }
 }
