@@ -23,7 +23,7 @@ export class ChatController {
     async direct(@Body() body: { userId }, @Req() req) {
         const token = req.headers.authorization?.split(' ')[1];
 
-        return await this.chatClient.send('direct.create', { data: body, context: buildContext(token, this.jwt) })
+        return await this.chatClient.send('direct.create', { userId: body.userId , context: buildContext(token, this.jwt) })
     }
 
     @Post('add-member')
