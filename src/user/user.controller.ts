@@ -107,4 +107,17 @@ export class UserController {
             context: context,
         });
     }
+
+    @Get('contacts/:contactUserId/room')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async contactRoom(
+        @Param('contactUserId') contactUserId: string,
+        @HttpContext() context
+    ) {
+
+        return this.userClient.send('contact.room  ', {
+            contactUserId,
+            context: context,
+        });
+    }
 }
