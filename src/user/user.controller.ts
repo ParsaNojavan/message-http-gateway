@@ -115,7 +115,7 @@ export class UserController {
         @HttpContext() context
     ) {
 
-        return this.userClient.send('contact.room  ', {
+        return this.userClient.send('contact.room', {
             contactUserId,
             context: context,
         });
