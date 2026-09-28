@@ -23,7 +23,7 @@ export class ChatController {
     async direct(@Body() body: { userId }, @Req() req) {
         const token = req.headers.authorization?.split(' ')[1];
 
-        return await this.chatClient.send('direct.create', { userId: body.userId , context: buildContext(token, this.jwt) })
+        return await this.chatClient.send('direct.create', { userId: body.userId, context: buildContext(token, this.jwt) })
     }
 
     @Post('add-member')
@@ -213,5 +213,21 @@ export class ChatController {
                 memberId: body.memberId,
                 context: context
             })
+    }
+
+    @Get('group/:targetUserId/common')
+    async getCommonRooms(
+        @Param('targetUserId') targetUserId: string,
+        @HttpContext() context,
+        @Query('cursor') cursor?: string,
+        @Query('limit') limit?: number | string,
+    ) {
+        return await this.chatClient.send('group.common', {
+            targetUserId: targetUserId,
+            cursor: cursor,
+            limit: limit,
+            context: context
+        }
+        );
     }
 }
