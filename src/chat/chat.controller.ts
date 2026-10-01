@@ -216,6 +216,7 @@ export class ChatController {
     }
 
     @Get('group/:targetUserId/common')
+    @UseGuards(new JwtAuthGuard(['user']))
     async getCommonRooms(
         @Param('targetUserId') targetUserId: string,
         @HttpContext() context,
