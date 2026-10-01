@@ -12,10 +12,10 @@ export class ChatController {
 
     @Post('create-group')
     @UseGuards(new JwtAuthGuard(['user']))
-    async create(@Body() groupDto, @Req() req) {
+    async create(@Body() body: { name, avatar }, @Req() req) {
         const token = req.headers.authorization?.split(' ')[1];
 
-        return await this.chatClient.send('group.create', { data: groupDto, context: buildContext(token, this.jwt) })
+        return await this.chatClient.send('group.create', { name: body.name, avatar: body.avatar, context: buildContext(token, this.jwt) })
     }
 
     @Post('create-direct')
