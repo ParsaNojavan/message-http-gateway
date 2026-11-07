@@ -142,6 +142,19 @@ export class ChatController {
         })
     }
 
+    @Get(':roomId/pins')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getPinnedMessages(
+        @HttpContext() context,
+        @Param('roomId') roomId: string
+    ) {
+
+        return this.chatClient.send('room.pins', {
+            roomId: roomId,
+            context: context
+        })
+    }
+
     @Get('messages/search')
     @UseGuards(new JwtAuthGuard(['user']))
     async searchMessages(
