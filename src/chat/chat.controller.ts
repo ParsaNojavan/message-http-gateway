@@ -244,4 +244,14 @@ export class ChatController {
         }
         );
     }
+
+    @Post(':roomId/pin')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async pinRoom(
+        @Param('roomId') roomId: string,
+        @HttpContext() context
+    ) {
+
+        return await this.chatClient.send('room.pin', { roomId: roomId, context: context })
+    }
 }
