@@ -365,4 +365,10 @@ export class ChatController {
             context,
         });
     }
+
+    @Get('saved-messages')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getSavedMessagesRoom(@HttpContext() context: any) {
+        return this.chatClient.send('chat.get-saved-room', { context: context });
+    }
 }
