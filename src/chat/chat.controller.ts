@@ -1,3 +1,4 @@
+import type ChatFolderDto from '@app/contracts/models/dtos/chat/chat-folder.dto';
 import { HttpContext } from '@app/contracts/utils/crossCuttingConcerns/decorators/http-context.decorator';
 import { buildContext } from '@app/contracts/utils/jwt_token/context/jwt.context';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
@@ -253,5 +254,115 @@ export class ChatController {
     ) {
 
         return await this.chatClient.send('room.pin', { roomId: roomId, context: context })
+    }
+
+    @Post('folders')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async createFolder(
+        @Body() folderDto: ChatFolderDto,
+        @HttpContext() context,
+    ) {
+        return this.chatClient.send('folder.create', {
+            ...folderDto,
+            context,
+        });
+    }
+
+    @Get('folders')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getUserFolders(@HttpContext() context: any) {
+        return this.chatClient.send('folder.get-all', {
+            context,
+        });
+    }
+
+    @Put('folders/reorder')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async reorderFolders(
+        @Body() body: { folderIds: string[] },
+        @HttpContext() context: any,
+    ) {
+        return this.chatClient.send('folder.reorder', {
+            folderIds: body.folderIds,
+            context,
+        });
+    }
+
+    @Get('folders/:folderId')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getFolderById(
+        @Param('folderId') folderId: string,
+        @HttpContext() context: any,
+    ) {
+        return this.chatClient.send('folder.get', {
+            folderId,
+            context,
+        });
+    }
+
+    @Put('folders/:folderId')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async updateFolder(
+        @Param('folderId') folderId: string,
+        @Body() folderDto: ChatFolderDto,
+        @HttpContext() context: any,
+    ) {
+        return this.chatClient.send('folder.update', {
+            folderId,
+            folderDto,
+            context,
+        });
+    }
+
+    @Delete('folders/:folderId')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async deleteFolder(
+        @Param('folderId') folderId: string,
+        @HttpContext() context: any,
+    ) {
+        return this.chatClient.send('folder.delete', {
+            folderId,
+            context,
+        });
+    }
+
+    @Post('folders/:folderId/rooms/:roomId')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async addRoomToFolder(
+        @Param('folderId') folderId: string,
+        @Param('roomId') roomId: string,
+        @HttpContext() context: any,
+    ) {
+        return this.chatClient.send('folder.add-room', {
+            folderId,
+            roomId,
+            context,
+        });
+    }
+
+    @Delete('folders/:folderId/rooms/:roomId')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async removeRoomFromFolder(
+        @Param('folderId') folderId: string,
+        @Param('roomId') roomId: string,
+        @HttpContext() context: any,
+    ) {
+        return this.chatClient.send('folder.remove-room', {
+            folderId,
+            roomId,
+            context,
+        });
+    }
+
+    @Get('folders/:folderId/rooms')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getFolderRooms(
+        @Param('folderId') folderId: string,
+        @HttpContext() context: any,
+    ) {
+        return this.chatClient.send('folder.get-rooms', {
+            folderId,
+            context,
+        });
     }
 }
