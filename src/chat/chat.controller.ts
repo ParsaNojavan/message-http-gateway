@@ -2,7 +2,7 @@ import type ChatFolderDto from '@app/contracts/models/dtos/chat/chat-folder.dto'
 import { HttpContext } from '@app/contracts/utils/crossCuttingConcerns/decorators/http-context.decorator';
 import { buildContext } from '@app/contracts/utils/jwt_token/context/jwt.context';
 import { JwtAuthGuard } from '@app/contracts/utils/jwt_token/guards/jwt.guard';
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -370,5 +370,23 @@ export class ChatController {
     @UseGuards(new JwtAuthGuard(['user']))
     async getSavedMessagesRoom(@HttpContext() context: any) {
         return this.chatClient.send('chat.get-saved-room', { context: context });
+    }
+
+    @Patch(':roomId/archive')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async archiveRoom(
+        @Param('roomId') roomId,
+        @HttpContext() context
+    ) {
+        return this.chatClient.send('room.archive', { roomId, context });
+    }
+
+    @Patch(':roomId/unarchive')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async unarchiveRoom(
+        @Param('roomId') roomId,
+        @HttpContext() context
+    ) {
+        return this.chatClient.send('room.unarchive', { roomId, context });
     }
 }
