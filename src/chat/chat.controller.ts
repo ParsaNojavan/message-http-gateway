@@ -389,4 +389,32 @@ export class ChatController {
     ) {
         return this.chatClient.send('room.unarchive', { roomId, context });
     }
+
+    @Get(':roomId/wallpaper')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getWallpapers(
+        @Param('roomId') roomId: string,
+        @HttpContext() context: any
+    ) {
+        return this.chatClient.send('wallpaper.list', {
+            roomId: roomId,
+            context: context
+        });
+    }
+
+    @Get(':roomId/wallpaper/effective')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getEffectiveWallpaper(
+        @Param('roomId') roomId: string,
+        @HttpContext() context: any
+    ) {
+        return this.chatClient.send('wallpaper.effective.get', { roomId, context });
+    }
+
+    @Get('wallpaper/global/list')
+    @UseGuards(new JwtAuthGuard(['user']))
+    async getSavedGlobalWallpapers(@HttpContext() context: any) {
+        return this.chatClient.send('wallpaper.global.list', { context });
+    }
+
 }
